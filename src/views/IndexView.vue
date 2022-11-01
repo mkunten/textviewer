@@ -6,6 +6,7 @@ import { useStore } from "../stores/index";
 const store = useStore();
 
 // data
+const appVersion = import.meta.env.VITE_APP_VERSION;
 const data = reactive({
   drawer: false,
   drawerItems: [
@@ -54,6 +55,9 @@ function test() {
     <v-toolbar-title>TextViewer</v-toolbar-title>
     <v-spacer></v-spacer>
     <v-btn @click="test">test</v-btn>
+    <v-chip :color="appVersion === 'prod' ? 'primary' : 'warning'">
+      {{ appVersion }}
+    </v-chip>
     <v-menu>
       <template v-slot:activator="{ props }">
         <v-btn v-bind="props" icon="mdi-dots-vertical"></v-btn>

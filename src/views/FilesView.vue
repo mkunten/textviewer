@@ -15,7 +15,8 @@ const refCreateFile = {
 };
 
 // data
-const apiFiles = "http://localhost:1323/api/files";
+const apiBase = import.meta.env.VITE_API_BASE;
+const apiFiles = `${apiBase}/files`;
 const snackbar = reactive({
   isOpen: false,
   color: "primary",
