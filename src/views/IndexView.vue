@@ -18,6 +18,10 @@ const data = reactive({
       to: "/files",
     },
     {
+      title: "Viewer",
+      to: "/viewer",
+    },
+    {
       title: "About",
       to: "/about",
     },
@@ -67,7 +71,12 @@ function test() {
       </v-list>
     </v-menu>
   </v-app-bar>
-  <v-navigation-drawer v-model="data.drawer" floating temporary>
+  <v-navigation-drawer
+    v-model="data.drawer"
+    style="z-index: 999999 !important"
+    floating
+    temporary
+  >
     <v-list>
       <v-list-item
         v-for="(item, i) in data.drawerItems"

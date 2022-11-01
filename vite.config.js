@@ -2,10 +2,10 @@ import { fileURLToPath, URL } from "node:url";
 
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
-import vuetify from "vite-plugin-vuetify"
+import vuetify from "vite-plugin-vuetify";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ command, mode }) => {
+export default defineConfig(({ mode }) => {
   return {
     plugins: [vue(), vuetify()],
     resolve: {
@@ -14,10 +14,10 @@ export default defineConfig(({ command, mode }) => {
       },
     },
     // shared options
-    base: mode === 'production' ? '/textviewer/' : '',
+    base: mode === "production" ? "/textviewer/" : "",
     // build options
     build: {
-      outDir: 'docs',
+      outDir: "docs",
     },
   };
 });
