@@ -11,6 +11,7 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         "@": fileURLToPath(new URL("./src", import.meta.url)),
+        stream: "stream-browserify",
       },
     },
     // shared options
@@ -18,6 +19,9 @@ export default defineConfig(({ mode }) => {
     // build options
     build: {
       outDir: "docs",
+      commonjsOptions: {
+        ignoreTryCatch: (id) => id !== "stream",
+      },
     },
   };
 });

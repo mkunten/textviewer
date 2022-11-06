@@ -91,7 +91,7 @@ function test() {
       ></v-list-item>
     </v-list>
   </v-navigation-drawer>
-  <v-main>
+  <v-main class="main">
     <router-view></router-view>
   </v-main>
   <v-dialog v-model="data.messageLogDialog" max-width="450px">
@@ -113,3 +113,10 @@ function test() {
     </v-card>
   </v-dialog>
 </template>
+
+<style scoped>
+/* todo: 64px(app-bar height) overflow without this */
+.main {
+  max-height: 720px;
+}
+</style>

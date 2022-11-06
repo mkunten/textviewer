@@ -36,3 +36,13 @@ yarn lint
 ## License
 
 see LICENSE
+
+## Notes
+
+### xml-js
+
+see https://github.com/vitejs/vite/issues/7555#issuecomment-1141193871
+
+```sh
+yarn add buffer events process stream-browserify
+```
