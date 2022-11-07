@@ -62,7 +62,6 @@ export const useStore = defineStore({
       this.m3 = m3;
     },
     setM3Layout(idIdx, canvasIdOrIdx, lineIdx) {
-      console.log(1234, idIdx, canvasIdOrIdx, lineIdx);
       this.texts[this.currId].layoutIdIdx = idIdx;
       this.texts[this.currId].layoutCanvasIdOrIdx = canvasIdOrIdx;
       this.texts[this.currId].layoutLineIdx = lineIdx;
@@ -100,9 +99,11 @@ export const useStore = defineStore({
       let id = 0;
       const map = {};
       const xmlIDs = {};
-      const walk = (obj0) => {
+      const walk = (obj0, nodeIdx, parent) => {
         const obj1 = obj0;
         obj1.elementID = id;
+        obj1.nodeIdx = nodeIdx;
+        obj1.parent = parent;
         if (obj1.name) {
           if (!map[obj1.name]) {
             map[obj1.name] = 1;
@@ -115,12 +116,12 @@ export const useStore = defineStore({
         }
         id += 1;
         if (obj1.elements) {
-          obj1.elements.forEach((obj2) => {
-            walk(obj2);
+          obj1.elements.forEach((obj2, idx) => {
+            walk(obj2, idx, obj1);
           });
         }
       };
-      walk(obj);
+      walk(obj, 0, null);
 
       const list = Object.keys(map)
         .sort()

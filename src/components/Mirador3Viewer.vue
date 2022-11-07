@@ -136,7 +136,7 @@ watch(
 
 // lifecycle hooks
 onMounted(() => {
-  console.log('m3: mounted');
+  console.info('m3: mounted');
   if (store.m3) {
     store.m3.unmount();
   }
@@ -144,7 +144,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-  console.log('m3: unmounted');
+  console.info('m3: unmounted');
   if (store.m3) {
     store.m3.unmount();
   }

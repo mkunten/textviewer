@@ -41,23 +41,64 @@ export default {
 
     const parseCanvasId = (s) => (/^https?:\/\/.*\/canvas\/.*$/.test(s) ? s : null);
 
-    const updatePb = (ed, attrs) => {
-      let canvasId = parseCanvasId(attrs.facs);
-      if (!canvasId) {
-        if (attrs.source) {
-          const source = store.currTei.xmlIDs[attrs.source];
-          if (source) {
-            canvasId = parseCanvasId(source.attributes.source);
+    const doUpdatePos = (el) => {
+      const ed = el.attributes.edRef
+        ? el.attributes.edRef.slice(1)
+        : store.currId;
+      const isOriginal = ed === store.currId;
+      if (el.name === 'pb') {
+        let canvasId = parseCanvasId(el.attributes.facs);
+        if (!canvasId) {
+          if (el.attributes.source) {
+            const source = store.currTei.xmlIDs[el.attributes.source];
+            if (source) {
+              canvasId = parseCanvasId(source.attributes.source);
+            }
           }
         }
+        const updatePbPos = inject('updatePbPos');
+        return {
+          pos: updatePbPos(ed, canvasId),
+          isOriginal,
+        };
       }
-      const updatePbPos = inject('updatePbPos');
-      return updatePbPos(ed, canvasId);
+      const updateLbPos = inject('updateLbPos');
+      return {
+        pos: updateLbPos(ed, el.attributes.n),
+        isOriginal,
+      };
     };
 
-    const updateLb = (ed, line) => {
-      const updateLbPos = inject('updateLbPos');
-      return updateLbPos(ed, line);
+    const updatePos = (el) => {
+      const checkIsPosStacked = inject('checkIsPosStacked');
+      if (checkIsPosStacked()) {
+        const ed = el.attributes.edRef
+          ? el.attributes.edRef.slice(1)
+          : store.currId;
+        const isOriginal = ed === store.currId;
+        const getPos = inject('getPos');
+        return {
+          pos: getPos(),
+          isOriginal,
+        };
+      }
+      const res = doUpdatePos(el);
+      let { pos } = res;
+      const { isOriginal } = res;
+      const siblings = el.parent.elements;
+      const incrementPosStacked = inject('incrementPosStacked');
+      for (let i = el.nodeIdx + 1; i < siblings.length; i += 1) {
+        if (siblings[i].name === 'pb' || siblings[i].name === 'lb') {
+          pos = doUpdatePos(siblings[i]).pos;
+          incrementPosStacked();
+        } else {
+          break;
+        }
+      }
+      return {
+        pos,
+        isOriginal,
+      };
     };
 
     const onPosClicked = (event) => {
@@ -85,11 +126,7 @@ export default {
       case 'element': {
         switch (elRef.value.name) {
           case 'pb': {
-            const ed = elRef.value.attributes.edRef
-              ? elRef.value.attributes.edRef.slice(1)
-              : store.currId;
-            const isOriginal = ed === store.currId;
-            const pos = updatePb(ed, elRef.value.attributes);
+            const { pos, isOriginal } = updatePos(elRef.value);
             if (isOriginal) {
               vnodes = [h('br', { class: getClassName() })];
             } else {
@@ -112,11 +149,7 @@ export default {
             break;
           }
           case 'lb': {
-            const ed = elRef.value.attributes.edRef
-              ? elRef.value.attributes.edRef.slice(1)
-              : store.currId;
-            const isOriginal = ed === store.currId;
-            const pos = updateLb(ed, elRef.value.attributes.n);
+            const { pos, isOriginal } = updatePos(elRef.value);
             if (isOriginal) {
               vnodes = [h('br', { class: getClassName() })];
             } else {

@@ -1,5 +1,5 @@
 <script setup>
-import { provide, readonly } from 'vue';
+import { provide } from 'vue';
 import { useStore } from '@/stores';
 import TeiNodes from '@/components/TeiNodes.vue';
 
@@ -16,8 +16,21 @@ const props = defineProps({
 const { layout } = store.currText;
 const pbPos = [Array(layout.length).fill(0), Array(layout.length).fill(0)];
 const lbPos = Array(layout.length).fill(1);
+let posStacked = 0;
 
 // methods
+const checkIsPosStacked = () => {
+  if (posStacked > 0) {
+    posStacked -= 1;
+    return true;
+  }
+  return false;
+};
+
+const incrementPosStacked = () => {
+  posStacked += 1;
+};
+
 const updatePbPos = (ed, canvas) => {
   for (let idx0 = 0; idx0 < layout.length; idx0 += 1) {
     const idx1 = layout[idx0].indexOf(ed);
@@ -46,10 +59,17 @@ const updateLbPos = (ed, line) => {
   };
 };
 
+const getPos = () => ({
+  pb: pbPos,
+  lb: lbPos,
+});
+
 // provide
-provide('pbPos', readonly(pbPos));
+provide('checkIsPosStacked', checkIsPosStacked);
+provide('incrementPosStacked', incrementPosStacked);
 provide('updatePbPos', updatePbPos);
 provide('updateLbPos', updateLbPos);
+provide('getPos', getPos);
 </script>
 
 <template>
