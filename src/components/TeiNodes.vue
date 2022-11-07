@@ -1,11 +1,13 @@
 <script>
-import { toRef, inject, h, useCssModule } from "vue";
-import { useStore } from "../stores";
-import TeiApp from "@/components/TeiApp.vue";
-import TeiNodes from "@/components/TeiNodes.vue";
-import { VBadge } from "vuetify/components/VBadge";
-import { VBtn } from "vuetify/components/VBtn";
-import { VChip } from "vuetify/components/VChip";
+import {
+  toRef, inject, h, useCssModule,
+} from 'vue';
+import { VBadge } from 'vuetify/components/VBadge';
+import { VBtn } from 'vuetify/components/VBtn';
+import { VChip } from 'vuetify/components/VChip';
+import { useStore } from '../stores';
+import TeiApp from '@/components/TeiApp.vue';
+import TeiNodes from '@/components/TeiNodes.vue';
 
 export default {
   components: {
@@ -26,21 +28,18 @@ export default {
     const style = useCssModule();
 
     // props
-    const elRef = toRef(props, "el");
-    const parentsRef = toRef(props, "parents");
-    const depthRef = toRef(props, "depth");
+    const elRef = toRef(props, 'el');
+    const parentsRef = toRef(props, 'parents');
+    const depthRef = toRef(props, 'depth');
 
     // methods
-    const renderChild = (el) =>
-      h(TeiNodes, {
-        el,
-        parents: parentsRef.value.concat(elRef.value.name),
-        depth: depthRef.value + 1,
-      });
+    const renderChild = (el) => h(TeiNodes, {
+      el,
+      parents: parentsRef.value.concat(elRef.value.name),
+      depth: depthRef.value + 1,
+    });
 
-    const parseCanvasId = (s) => {
-      return new RegExp("^https?://.*/canvas/.*$").test(s) ? s : null;
-    };
+    const parseCanvasId = (s) => (/^https?:\/\/.*\/canvas\/.*$/.test(s) ? s : null);
 
     const updatePb = (ed, attrs) => {
       let canvasId = parseCanvasId(attrs.facs);
@@ -52,48 +51,47 @@ export default {
           }
         }
       }
-      const updatePbPos = inject("updatePbPos");
+      const updatePbPos = inject('updatePbPos');
       return updatePbPos(ed, canvasId);
     };
 
     const updateLb = (ed, line) => {
-      const updateLbPos = inject("updateLbPos");
+      const updateLbPos = inject('updateLbPos');
       return updateLbPos(ed, line);
     };
 
     const onPosClicked = (event) => {
-      const pos = event.target.classList.contains("v-badge__badge")
+      const pos = event.target.classList.contains('v-badge__badge')
         ? JSON.parse(event.target.parentNode.parentNode.dataset.pos)
         : JSON.parse(event.target.dataset.pos);
       store.setM3Layout(pos.pb[0], pos.pb[1], pos.lb);
       event.preventDefault();
     };
 
-    const getClassName = (tategaki = false) =>
-      tategaki
-        ? `${style[`tei-${elRef.value.name}`]} ${style["tategaki"]}`
-        : style[`tei-${elRef.value.name}`];
+    const getClassName = (tategaki = false) => (tategaki
+      ? `${style[`tei-${elRef.value.name}`]} ${style.tategaki}`
+      : style[`tei-${elRef.value.name}`]);
 
     // render
     let vnodes = null;
 
     switch (elRef.value.type) {
-      case "text": {
+      case 'text': {
         if (elRef.value.text) {
-          vnodes = h("span", elRef.value.text);
+          vnodes = h('span', elRef.value.text);
         }
         break;
       }
-      case "element": {
+      case 'element': {
         switch (elRef.value.name) {
-          case "pb": {
+          case 'pb': {
             const ed = elRef.value.attributes.edRef
               ? elRef.value.attributes.edRef.slice(1)
               : store.currId;
             const isOriginal = ed === store.currId;
             const pos = updatePb(ed, elRef.value.attributes);
             if (isOriginal) {
-              vnodes = [h("br", { class: getClassName() })];
+              vnodes = [h('br', { class: getClassName() })];
             } else {
               vnodes = [];
             }
@@ -103,38 +101,38 @@ export default {
                 {
                   class: getClassName(true),
                   title: elRef.value.attributes.edRef,
-                  color: isOriginal ? "primary" : "secondary",
-                  "prepend-icon": "mdi-book-open-page-variant-outline",
-                  "data-pos": JSON.stringify(pos),
+                  color: isOriginal ? 'primary' : 'secondary',
+                  'prepend-icon': 'mdi-book-open-page-variant-outline',
+                  'data-pos': JSON.stringify(pos),
                   onClick: onPosClicked,
                 },
-                () => elRef.value.attributes.n
-              )
+                () => elRef.value.attributes.n,
+              ),
             );
             break;
           }
-          case "lb": {
+          case 'lb': {
             const ed = elRef.value.attributes.edRef
               ? elRef.value.attributes.edRef.slice(1)
               : store.currId;
             const isOriginal = ed === store.currId;
             const pos = updateLb(ed, elRef.value.attributes.n);
             if (isOriginal) {
-              vnodes = [h("br", { class: getClassName() })];
+              vnodes = [h('br', { class: getClassName() })];
             } else {
               vnodes = [];
             }
             vnodes.push(
               h(VBadge, {
                 class: getClassName(true),
-                style: "cursor: pointer",
+                style: 'cursor: pointer',
                 title: elRef.value.attributes.edRef,
-                color: isOriginal ? "primary" : "secondary",
+                color: isOriginal ? 'primary' : 'secondary',
                 content: elRef.value.attributes.n,
                 inline: true,
-                "data-pos": JSON.stringify(pos),
+                'data-pos': JSON.stringify(pos),
                 onClick: onPosClicked,
-              })
+              }),
             );
             break;
           }
@@ -144,7 +142,7 @@ export default {
           //   }
           //   break;
           // }
-          case "app": {
+          case 'app': {
             vnodes = h(TeiApp, {
               el: elRef.value,
               parents: parentsRef.value,
@@ -152,14 +150,14 @@ export default {
             });
             break;
           }
-          case "add": {
+          case 'add': {
             vnodes = h(VBtn, {
-              variant: "plain",
-              size: "x-small",
-              icon: "mdi-information",
-              title: "付加",
+              variant: 'plain',
+              size: 'x-small',
+              icon: 'mdi-information',
+              title: '付加',
               onClick: () => {
-                window.message("add");
+                window.message('add');
               },
             });
             break;
@@ -173,14 +171,14 @@ export default {
         }
         break;
       }
-      case "cdata": {
+      case 'cdata': {
         break;
       }
-      case "comment": {
+      case 'comment': {
         break;
       }
       default: {
-        console.error("TeiNodes: unexpected type:", elRef.value);
+        console.error('TeiNodes: unexpected type:', elRef.value);
         break;
       }
     }

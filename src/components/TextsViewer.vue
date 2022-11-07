@@ -1,15 +1,13 @@
 <script setup>
-import { computed } from "vue";
-import { useStore } from "@/stores";
-import TeiContainer from "@/components/TeiContainer.vue";
+import { computed } from 'vue';
+import { useStore } from '@/stores';
+import TeiContainer from '@/components/TeiContainer.vue';
 
 // store
 const store = useStore();
 
 // computed
-const tree = computed(() => {
-  return store.currTree;
-});
+const tree = computed(() => store.currTree);
 
 // methods
 // // find a element by a tagname

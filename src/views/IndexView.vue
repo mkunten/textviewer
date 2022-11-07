@@ -1,6 +1,6 @@
 <script setup>
-import { reactive } from "vue";
-import { useStore } from "../stores/index";
+import { reactive } from 'vue';
+import { useStore } from '../stores/index';
 
 // store
 const store = useStore();
@@ -11,20 +11,20 @@ const data = reactive({
   drawer: false,
   drawerItems: [
     {
-      title: "Home",
-      to: "/",
+      title: 'Home',
+      to: '/',
     },
     {
-      title: "Files",
-      to: "/files",
+      title: 'Files',
+      to: '/files',
     },
     {
-      title: "Viewer",
-      to: "/viewer",
+      title: 'Viewer',
+      to: '/viewer',
     },
     {
-      title: "About",
-      to: "/about",
+      title: 'About',
+      to: '/about',
     },
   ],
   messageLogDialog: false,
@@ -33,14 +33,14 @@ const data = reactive({
 // methods
 function test() {
   store.messages.push({
-    sender: "index",
-    type: "success",
-    message: "success test ",
+    sender: 'index',
+    type: 'success',
+    message: 'success test ',
   });
   store.messages.push({
-    sender: "index",
-    type: "error",
-    message: "error test",
+    sender: 'index',
+    type: 'error',
+    message: 'error test',
   });
   console.log(store.messages);
 }

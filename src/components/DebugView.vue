@@ -1,34 +1,34 @@
 <script setup>
-import { reactive } from "vue";
-import { useStore } from "@/stores";
+import { reactive } from 'vue';
+import { useStore } from '@/stores';
 
 const store = useStore();
 
 const data = reactive({
   items: [
     {
-      label: "a",
+      label: 'a',
       pb: [
         [0, 0],
         [3, 5],
       ],
     },
     {
-      label: "b",
+      label: 'b',
       pb: [
         [0, 0],
         [10, 15],
       ],
     },
     {
-      label: "c",
+      label: 'c',
       pb: [
         [0, 1],
         [8, 6],
       ],
     },
     {
-      label: "d",
+      label: 'd',
       pb: [
         [0, 2],
         [13, 8],

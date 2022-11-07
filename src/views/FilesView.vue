@@ -1,7 +1,7 @@
 <script setup>
-import axios from "axios";
-import { ref, reactive, onMounted } from "vue";
-import { useStore } from "../stores/index";
+import axios from 'axios';
+import { ref, reactive, onMounted } from 'vue';
+import { useStore } from '../stores/index';
 
 // store
 const store = useStore();
@@ -19,16 +19,16 @@ const apiBase = import.meta.env.VITE_API_BASE;
 const apiFiles = `${apiBase}/files`;
 const snackbar = reactive({
   isOpen: false,
-  color: "primary",
+  color: 'primary',
   timeout: 5000,
-  message: "no messages",
+  message: 'no messages',
 });
 const fileDefault = {
   id: 0,
-  name: "",
-  path: "",
+  name: '',
+  path: '',
   size: 0,
-  sha256: "",
+  sha256: '',
   file: [],
 };
 const data = reactive({
@@ -38,11 +38,11 @@ const data = reactive({
   deleteFileDialog: false,
   file: {
     id: 0,
-    name: "",
-    path: "",
+    name: '',
+    path: '',
     size: 0,
-    sha256: "",
-    updated: "",
+    sha256: '',
+    updated: '',
     file: fileDefault,
   },
   formFiles: [],
@@ -50,34 +50,29 @@ const data = reactive({
   tab: null,
 });
 
-// mounted
-onMounted(() => {
-  onSearch();
-});
-
 // methods
-function showSuccess(mes) {
-  snackbar.color = "info";
+const showSuccess = (mes) => {
+  snackbar.color = 'info';
   snackbar.message = mes;
   snackbar.isOpen = true;
   store.messages.push({
-    sender: "files",
-    type: "success",
+    sender: 'files',
+    type: 'success',
     message: mes,
   });
-}
-function showError(err) {
+};
+const showError = (err) => {
   const mes = axios.isAxiosError(err) ? err.response.data.message : err;
-  snackbar.color = "error";
+  snackbar.color = 'error';
   snackbar.message = mes;
   snackbar.isOpen = true;
   store.messages.push({
-    sender: "files",
-    type: "error",
+    sender: 'files',
+    type: 'error',
     message: mes,
   });
-}
-function onSearch() {
+};
+const onSearch = () => {
   axios
     .get(apiFiles)
     .then((res) => {
@@ -86,22 +81,22 @@ function onSearch() {
     .catch((err) => {
       showError(err);
     });
-}
-function editNewFile() {
+};
+const editNewFile = () => {
   data.file = fileDefault;
   data.fileDialog = true;
-}
-function createFile() {
+};
+const createFile = () => {
   refCreateFile[data.tab].value.validate();
   if (data.formValid) {
-    if (data.tab === "file") {
-      data.file.file = data.formFiles[0];
+    if (data.tab === 'file') {
+      [data.file.file] = data.formFiles;
     }
-    const post = data.tab === "file" ? axios.postForm : axios.post;
+    const post = data.tab === 'file' ? axios.postForm : axios.post;
     post(apiFiles, data.file)
       .then((res) => {
         data.files.unshift(res.data);
-        showSuccess("registered");
+        showSuccess('registered');
 
         data.fileDialog = false;
         data.file = fileDefault;
@@ -110,12 +105,12 @@ function createFile() {
         showError(err);
       });
   }
-}
-function confirmDeleteFile(file) {
+};
+const confirmDeleteFile = (file) => {
   data.file = file;
   data.deleteFileDialog = true;
-}
-function deleteFile() {
+};
+const deleteFile = () => {
   axios
     .delete(`${apiFiles}/${data.file.id}`)
     .then((res) => {
@@ -129,7 +124,12 @@ function deleteFile() {
       data.file = fileDefault;
       data.deleteFileDialog = false;
     });
-}
+};
+
+// lifecycle hooks
+onMounted(() => {
+  onSearch();
+});
 </script>
 
 <template>

@@ -1,7 +1,7 @@
 <script setup>
-import { provide, readonly } from "vue";
-import { useStore } from "@/stores";
-import TeiNodes from "@/components/TeiNodes.vue";
+import { provide, readonly } from 'vue';
+import { useStore } from '@/stores';
+import TeiNodes from '@/components/TeiNodes.vue';
 
 // store
 const store = useStore();
@@ -13,7 +13,7 @@ const props = defineProps({
 });
 
 // data
-const layout = store.currText.layout;
+const { layout } = store.currText;
 const pbPos = [Array(layout.length).fill(0), Array(layout.length).fill(0)];
 const lbPos = Array(layout.length).fill(1);
 
@@ -47,9 +47,9 @@ const updateLbPos = (ed, line) => {
 };
 
 // provide
-provide("pbPos", readonly(pbPos));
-provide("updatePbPos", updatePbPos);
-provide("updateLbPos", updateLbPos);
+provide('pbPos', readonly(pbPos));
+provide('updatePbPos', updatePbPos);
+provide('updateLbPos', updateLbPos);
 </script>
 
 <template>

@@ -1,8 +1,8 @@
 <script setup>
-import { computed } from "vue";
+import { computed } from 'vue';
 
 // import { defineAsyncComponent } from 'vue';
-import TeiNodes from "@/components/TeiNodes.vue";
+import TeiNodes from '@/components/TeiNodes.vue';
 
 // props
 const props = defineProps({
@@ -12,12 +12,8 @@ const props = defineProps({
 });
 
 // computed
-const childParents = computed(() => {
-  return props.parents.concat("app");
-});
-const lem = computed(() => {
-  return props.el.elements.find((el) => el.name === "lem");
-});
+const childParents = computed(() => props.parents.concat('app'));
+const lem = computed(() => props.el.elements.find((el) => el.name === 'lem'));
 // const rdgs = computed(() => {
 //   return props.el.elements.filter((el) => el.name === "rdg");
 // });
