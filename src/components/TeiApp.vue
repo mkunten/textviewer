@@ -7,12 +7,10 @@ import TeiNodes from '@/components/TeiNodes.vue';
 // props
 const props = defineProps({
   el: { type: Object, default: null, required: true },
-  parents: { type: Array, default: () => [], required: false },
   depth: { type: Number, default: 0, required: true },
 });
 
 // computed
-const childParents = computed(() => props.parents.concat('app'));
 const lem = computed(() => props.el.elements.find((el) => el.name === 'lem'));
 // const rdgs = computed(() => {
 //   return props.el.elements.filter((el) => el.name === "rdg");
@@ -32,7 +30,7 @@ const lem = computed(() => props.el.elements.find((el) => el.name === 'lem'));
     prepend-icon="information-outline"
     size="18"
   >
-    <TeiNodes :el="lem" :parents="childParents" :depth="props.depth + 1">
+    <TeiNodes :el="lem" :depth="props.depth + 1">
     </TeiNodes>
     <!-- <v-tooltip activator="parent" location="end"> -->
     <!--   <div class="tategaki"> -->

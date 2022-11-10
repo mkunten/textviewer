@@ -1,6 +1,5 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
-import axios from 'axios';
-import { xml2js, json2xml } from 'xml-js';
+import { json2xml } from 'xml-js';
 
 /* eslint-disable-next-line import/prefer-default-export */
 export const useStore = defineStore({
@@ -72,11 +71,7 @@ export const useStore = defineStore({
         return null;
       }
       this.currId = id;
-      const uri = this.texts[this.currId].xmlURI;
-      if (!this.treeData[uri]) {
-        this.u_preprocessXML(uri);
-      }
-      return this.treeData[uri];
+      return id;
     },
     // teiData
     getTeiObjectsByTagname(tagname, uri = this.texts[this.currId].xmlURI) {
@@ -98,62 +93,6 @@ export const useStore = defineStore({
       });
     },
     // internal utility
-    async u_preprocessXML(uri) {
-      try {
-        const response = await axios.get(uri);
-        const data = xml2js(response.data, {
-          ignoreDeclaration: true,
-          ignoreInstruction: true,
-          ignoreComment: true,
-        });
-        const res = this.u_xmlJsInit(data);
-        this.treeData[uri] = res.tree;
-        this.teiData[uri] = res.tei;
-      } catch (err) {
-        console.error('TextsViewer: u_preprocessXML:', err);
-      }
-    },
-    u_xmlJsInit(obj) {
-      let id = 0;
-      const map = {};
-      const xmlIDs = {};
-      const walk = (obj0, nodeIdx, parent) => {
-        const obj1 = obj0;
-        obj1.elementID = id;
-        obj1.nodeIdx = nodeIdx;
-        obj1.parent = parent;
-        if (obj1.name) {
-          if (!map[obj1.name]) {
-            map[obj1.name] = 1;
-          } else {
-            map[obj1.name] += 1;
-          }
-        }
-        if (obj1.attributes && obj1.attributes['xml:id']) {
-          xmlIDs[`#${obj1.attributes['xml:id']}`] = obj1;
-        }
-        id += 1;
-        if (obj1.elements) {
-          obj1.elements.forEach((obj2, idx) => {
-            walk(obj2, idx, obj1);
-          });
-        }
-      };
-      walk(obj, 0, null);
-
-      const list = Object.keys(map)
-        .sort()
-        .map((name) => ({
-          name,
-          count: map[name],
-        }));
-      // console.info('taglist:', list, map, 'xml:id', xmlIDs);
-
-      return {
-        tree: obj,
-        tei: { list, xmlIDs, els: {} },
-      };
-    },
     u_initTeiObjectsByTagname(uri, tagname) {
       const r = [];
       const walk = (obj) => {

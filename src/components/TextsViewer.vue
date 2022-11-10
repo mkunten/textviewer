@@ -38,13 +38,13 @@ const data = reactive({
 });
 
 // computed
-const tree = computed(() => store.currTree);
 const teiItems = computed(() => (store.currTei
   ? store.currTei.list.concat(Object.keys(store.currTei.xmlIDs)
     .map((name) => ({ name })))
   : []));
 
 // methods
+
 const onMenuSelected = (param) => { // (id, value, event)
   if (typeof data.isDialog[param.id] !== 'undefined') {
     data.isDialog[param.id] = true;
@@ -56,6 +56,7 @@ const onVfmOpened = () => {
   // though cf. https://github.com/vue-final/vue-final-modal/issues/23
 };
 
+// watch
 watch(() => data.teiSelected, (v) => {
   if (v.startsWith('#')) {
     const el = store.currTei.xmlIDs[v];
@@ -94,10 +95,7 @@ watch(() => data.teiSelected, (v) => {
       ></v-list>
     </v-menu>
   </v-card>
-  <TeiContainer
-    v-if="tree"
-    :el="tree"
-  ></TeiContainer>
+  <TeiContainer :id="store.currId"></TeiContainer>
   <v-dialog v-model="data.isDialog.settings">
     <v-card>
       <v-toolbar>
