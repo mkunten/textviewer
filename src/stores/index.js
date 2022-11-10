@@ -1,6 +1,6 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import axios from 'axios';
-import { xml2js } from 'xml-js';
+import { xml2js, json2xml } from 'xml-js';
 
 /* eslint-disable-next-line import/prefer-default-export */
 export const useStore = defineStore({
@@ -58,7 +58,6 @@ export const useStore = defineStore({
   actions: {
     // m3
     setM3(m3) {
-      console.log('store.setM3: ', m3);
       this.m3 = m3;
     },
     setM3Layout(idIdx, canvasIdOrIdx, lineIdx) {
@@ -79,7 +78,26 @@ export const useStore = defineStore({
       }
       return this.treeData[uri];
     },
+    // teiData
+    getTeiObjectsByTagname(tagname, uri = this.texts[this.currId].xmlURI) {
+      if (this.teiData[uri].els[tagname] === undefined) {
+        this.u_initTeiObjectsByTagname(uri, tagname);
+      }
+      return this.teiData[uri].els[tagname];
+    },
     // utility
+    prettifyJson(obj) {
+      if (!obj) {
+        return '';
+      }
+      return json2xml({ elements: [obj] }, {
+        spaces: 2,
+        fullTagEmptyElement: true,
+        indentCxml: true,
+        indentAttributes: true,
+      });
+    },
+    // internal utility
     async u_preprocessXML(uri) {
       try {
         const response = await axios.get(uri);
@@ -89,7 +107,7 @@ export const useStore = defineStore({
           ignoreComment: true,
         });
         const res = this.u_xmlJsInit(data);
-        [, this.treeData[uri]] = res.tree.elements[0].elements;
+        this.treeData[uri] = res.tree;
         this.teiData[uri] = res.tei;
       } catch (err) {
         console.error('TextsViewer: u_preprocessXML:', err);
@@ -136,9 +154,27 @@ export const useStore = defineStore({
         tei: { list, xmlIDs, els: {} },
       };
     },
+    u_initTeiObjectsByTagname(uri, tagname) {
+      const r = [];
+      const walk = (obj) => {
+        if (!obj.elements) {
+          return;
+        }
+        obj.elements.forEach((o) => {
+          if (o.name === tagname) {
+            r.push(o);
+          } else {
+            walk(o);
+          }
+        });
+      };
+      walk(this.treeData[uri]);
+      this.teiData[uri].els[tagname] = r;
+    },
   },
 });
 
+// ??
 if (import.meta.hot) {
   import.meta.hot.accept(acceptHMRUpdate(useStore, import.meta.hot));
 }
