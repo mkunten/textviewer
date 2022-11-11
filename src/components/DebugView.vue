@@ -1,6 +1,6 @@
 <script setup>
 import { reactive } from 'vue';
-import { useStore } from '@/stores';
+import { useStore } from '@/stores/index';
 
 const store = useStore();
 

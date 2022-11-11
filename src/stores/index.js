@@ -1,5 +1,4 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
-import { json2xml } from 'xml-js';
 
 /* eslint-disable-next-line import/prefer-default-export */
 export const useStore = defineStore({
@@ -72,43 +71,6 @@ export const useStore = defineStore({
       }
       this.currId = id;
       return id;
-    },
-    // teiData
-    getTeiObjectsByTagname(tagname, uri = this.texts[this.currId].xmlURI) {
-      if (this.teiData[uri].els[tagname] === undefined) {
-        this.u_initTeiObjectsByTagname(uri, tagname);
-      }
-      return this.teiData[uri].els[tagname];
-    },
-    // utility
-    prettifyJson(obj) {
-      if (!obj) {
-        return '';
-      }
-      return json2xml({ elements: [obj] }, {
-        spaces: 2,
-        fullTagEmptyElement: true,
-        indentCxml: true,
-        indentAttributes: true,
-      });
-    },
-    // internal utility
-    u_initTeiObjectsByTagname(uri, tagname) {
-      const r = [];
-      const walk = (obj) => {
-        if (!obj.elements) {
-          return;
-        }
-        obj.elements.forEach((o) => {
-          if (o.name === tagname) {
-            r.push(o);
-          } else {
-            walk(o);
-          }
-        });
-      };
-      walk(this.treeData[uri]);
-      this.teiData[uri].els[tagname] = r;
     },
   },
 });

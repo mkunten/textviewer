@@ -1,7 +1,7 @@
 <script setup>
 import axios from 'axios';
 import { ref, reactive, onMounted } from 'vue';
-import { useStore } from '../stores/index';
+import { useStore } from '@/stores/index';
 
 // store
 const store = useStore();

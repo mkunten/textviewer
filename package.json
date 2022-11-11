@@ -26,7 +26,6 @@
     "vue": "^3.2.41",
     "vue-final-modal": "3",
     "vue-prism-component": "https://github.com/mxmvshnvsk/vue-prism-component#fix/code-prop",
-    "vue-prism-component-custom": "https://github.com/mkunten/vue-prism-component/",
     "vue-router": "^4.1.5",
     "vuetify": "npm:@vuetify/nightly@next",
     "webfontloader": "^1.0.0",

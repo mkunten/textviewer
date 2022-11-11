@@ -41,7 +41,7 @@ const lem = computed(() => props.el.elements.find((el) => el.name === 'lem'));
     <!--     </div> -->
     <!--     <div -->
     <!--       v-for="el in rdgs" -->
-    <!--       :key="el.elementID" -->
+    <!--       :key="el.elementId" -->
     <!--     > -->
     <!--       {{ formatLabel(el.attributes.wit) }} -->
     <!--       <TeiNodes :el="el" :parents="childParents" /> -->

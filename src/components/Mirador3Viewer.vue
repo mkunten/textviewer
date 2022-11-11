@@ -2,7 +2,7 @@
 import Mirador from 'mirador/dist/es/src';
 import { miradorImageToolsPlugin } from 'mirador-image-tools';
 import { watch, onMounted, onBeforeUnmount } from 'vue';
-import { useStore } from '@/stores';
+import { useStore } from '@/stores/index';
 
 // store
 const store = useStore();

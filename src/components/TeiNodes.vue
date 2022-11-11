@@ -5,7 +5,6 @@ import {
 import { VBadge } from 'vuetify/components/VBadge';
 import { VBtn } from 'vuetify/components/VBtn';
 import { VChip } from 'vuetify/components/VChip';
-import { useStore } from '../stores';
 import TeiApp from '@/components/TeiApp.vue';
 import TeiNodes from '@/components/TeiNodes.vue';
 
@@ -20,9 +19,6 @@ export default {
   },
 
   setup(props) {
-    // store
-    const store = useStore();
-
     // style
     const style = useCssModule();
 
@@ -30,17 +26,21 @@ export default {
     const elRef = toRef(props, 'el');
     const depthRef = toRef(props, 'depth');
 
+    // inject
+    const parseCanvasId = inject('parseCanvasId');
+    const teiXmlIds = inject('teiXmlIds');
+    const setM3Layout = inject('setM3Layout');
+
     // methods
     const renderChild = (el) => h(TeiNodes, {
       el,
       depth: depthRef.value + 1,
     });
 
-    const parseCanvasId = inject('parseCanvasId');
-
     const parsePb1 = (pb1) => pb1.map((v) => {
       if (!Number.isInteger(v) && v.startsWith('source:#')) {
-        const source = store.currTei.xmlIDs[v.slice(7)];
+        const xmlIds = teiXmlIds();
+        const source = xmlIds ? xmlIds[v.slice(7)] : null;
         if (source) {
           return parseCanvasId(source.attributes.source);
         }
@@ -52,7 +52,7 @@ export default {
       const pos = event.target.classList.contains('v-badge__badge')
         ? JSON.parse(event.target.parentNode.parentNode.dataset.pos)
         : JSON.parse(event.target.dataset.pos);
-      store.setM3Layout(pos.pb[0], parsePb1(pos.pb[1]), pos.lb);
+      setM3Layout(pos.pb[0], parsePb1(pos.pb[1]), pos.lb);
       event.preventDefault();
     };
 
