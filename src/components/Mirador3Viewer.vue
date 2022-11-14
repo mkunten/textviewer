@@ -1,7 +1,9 @@
 <script setup>
 import Mirador from 'mirador/dist/es/src';
 import { miradorImageToolsPlugin } from 'mirador-image-tools';
-import { watch, onMounted, onBeforeUnmount } from 'vue';
+import {
+  reactive, watch, onMounted, onBeforeUnmount,
+} from 'vue';
 import { useStore } from '@/stores/index';
 
 // store
@@ -11,6 +13,11 @@ const store = useStore();
 const props = defineProps({
   miradorId: String,
   target: String,
+});
+
+// data
+const data = reactive({
+  m3: null,
 });
 
 // methods
@@ -55,35 +62,35 @@ const generateM3Config = () => ({
 });
 
 const initM3 = () => {
-  if (store.m3) {
-    store.m3.unmount();
+  if (data.m3) {
+    data.m3.unmount();
   }
 
-  const m3 = Mirador.viewer(generateM3Config(), [...miradorImageToolsPlugin]);
-  store.setM3(m3);
-  window.m3 = m3; // debug
+  data.m3 = Mirador.viewer(generateM3Config(), [...miradorImageToolsPlugin]);
+
+  window.m3 = data.m3; // debug
 };
 
 // const addM3Window = (window) => {
-//   const windows = Object.keys(store.m3.store.getState().windows);
+//   const windows = Object.keys(data.m3.store.getState().windows);
 //   if (!windows.includes(window.id)) {
-//     store.m3.store.dispatch(Mirador.actions.addWindow(window));
+//     data.m3.store.dispatch(Mirador.actions.addWindow(window));
 //   }
 // };
 
 const generateCanvasId = (id, canvasIdOrIdx) => (Number.isInteger(canvasIdOrIdx)
-  ? store.m3.store.getState().manifests[store.currText.manifestURI[id]].json
+  ? data.m3.store.getState().manifests[store.currText.manifestURI[id]].json
     .sequences[0].canvases[canvasIdOrIdx]['@id']
   : canvasIdOrIdx);
 
 const updateM3LayoutIfNecessary = (idIdx, canvasIdOrIdx) => {
   let isLayoutUpdated = false;
   const expected = idIdx.map((n, idx) => store.currText.layout[idx][n]);
-  const { windowIds } = store.m3.store.getState().workspace;
+  const { windowIds } = data.m3.store.getState().workspace;
   expected.forEach((n, idx) => {
     if (!windowIds.includes(n)) {
       if (Number.isInteger(canvasIdOrIdx[idx])) {
-        store.m3.store.dispatch(
+        data.m3.store.dispatch(
           Mirador.actions.addWindow({
             id: n,
             manifestId: store.currText.manifestURI[n],
@@ -91,7 +98,7 @@ const updateM3LayoutIfNecessary = (idIdx, canvasIdOrIdx) => {
           }),
         );
       } else {
-        store.m3.store.dispatch(
+        data.m3.store.dispatch(
           Mirador.actions.addWindow({
             id: n,
             manifestId: store.currText.manifestURI[n],
@@ -104,15 +111,15 @@ const updateM3LayoutIfNecessary = (idIdx, canvasIdOrIdx) => {
   });
   windowIds.forEach((n, idx) => {
     if (isLayoutUpdated && !expected.includes(n)) {
-      store.m3.store.dispatch(Mirador.actions.removeWindow(n));
+      data.m3.store.dispatch(Mirador.actions.removeWindow(n));
     } else {
-      store.m3.store.dispatch(
+      data.m3.store.dispatch(
         Mirador.actions.setCanvas(n, generateCanvasId(n, canvasIdOrIdx[idx])),
       );
     }
   });
   if (isLayoutUpdated) {
-    store.m3.store.dispatch(
+    data.m3.store.dispatch(
       Mirador.actions.updateWorkspaceMosaicLayout(generateM3Layout()),
     );
     console.info('m3 layout updated');
@@ -137,16 +144,13 @@ watch(
 // lifecycle hooks
 onMounted(() => {
   console.info('m3: mounted');
-  if (store.m3) {
-    store.m3.unmount();
-  }
   initM3();
 });
 
 onBeforeUnmount(() => {
   console.info('m3: unmounted');
-  if (store.m3) {
-    store.m3.unmount();
+  if (data.m3) {
+    data.m3.unmount();
   }
 });
 </script>

@@ -10,7 +10,6 @@ export const useStore = defineStore({
       texts: false,
     },
     messages: [],
-    m3: null,
     list: [
       {
         provider: 'textwg',
@@ -55,9 +54,6 @@ export const useStore = defineStore({
 
   actions: {
     // m3
-    setM3(m3) {
-      this.m3 = m3;
-    },
     setM3Layout(idIdx, canvasIdOrIdx, lineIdx) {
       this.texts[this.currId].layoutIdIdx = idIdx;
       this.texts[this.currId].layoutCanvasIdOrIdx = canvasIdOrIdx;

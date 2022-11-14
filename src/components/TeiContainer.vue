@@ -1,6 +1,6 @@
 <script setup>
 import {
-  reactive, computed, watch, onMounted, provide, readonly,
+  reactive, computed, onMounted, provide, readonly,
 } from 'vue';
 import { VueFinalModal } from 'vue-final-modal';
 import Prism from 'vue-prism-component/src/index';
@@ -43,8 +43,8 @@ const data = reactive({
     }, {
       type: 'divider',
     }, {
-      id: 'tools',
-      title: 'TEI tools',
+      id: 'tagSelector',
+      title: 'Tag Selector',
       props: {
         'prepend-icon': 'mdi-cog',
       },
@@ -53,18 +53,14 @@ const data = reactive({
   // dialog
   isDialog: {
     settings: false,
-    tools: false,
+    tagSelector: false,
   },
-  // tools
-  codes: [],
-  teiSelected: '',
+  // tagSelector
+  tagSelector: {
+    model: null,
+    select: null,
+  },
 });
-
-// computed
-const teiItems = computed(() => (data.tei.xmlIds
-  ? data.tei.list.concat(Object.keys(data.tei.xmlIds)
-    .map((name) => ({ name })))
-  : []));
 
 // methods for provide
 const parseCanvasId = (s) => (/^https?:\/\/.*\/canvas\/.*$/.test(s) ? s : null);
@@ -174,7 +170,6 @@ const xmlJsInit = (obj) => {
       name,
       count: map[name],
     }));
-  console.info('taglist:', list, map, 'xml:id', xmlIds);
 
   return {
     tei: { list, xmlIds, els: {} },
@@ -230,7 +225,6 @@ const init = async () => {
   if (res) {
     data.tei = res.tei;
     data.tree = res.tree;
-    // console.info(res.treeData.elements[0].elements[1].elements[0]);
     makeChunked(data.tree);
   }
 };
@@ -283,21 +277,29 @@ const onVfmOpened = () => {
   // though cf. https://github.com/vue-final/vue-final-modal/issues/23
 };
 
-// watch
-watch(() => data.teiSelected, (v) => {
-  if (v.startsWith('#')) {
-    const el = data.tei.xmlIds[v];
-    data.codes = [{
+// computed
+const tagSelectorItems = computed(() => (data.tei.xmlIds
+  ? data.tei.list.concat(Object.keys(data.tei.xmlIds)
+    .map((name) => ({ name })))
+  : []));
+
+const tagSelectorCodes = computed(() => {
+  if (!data.tagSelector.model) {
+    return [];
+  }
+  if (data.tagSelector.model.startsWith('#')) {
+    const el = data.tei.xmlIds[data.tagSelector.model];
+    return [{
       elementId: el.elementId,
+
       code: prettifyJson(el),
     }];
-  } else {
-    const els = getTeiObjectsByTagname(v);
-    data.codes = els.map((el) => ({
-      elementId: el.elementId,
-      code: prettifyJson(el),
-    }));
   }
+  const els = getTeiObjectsByTagname(data.tagSelector.model);
+  return els.map((el) => ({
+    elementId: el.elementId,
+    code: prettifyJson(el),
+  }));
 });
 
 // lifecycle hooks
@@ -375,10 +377,10 @@ provide('setM3Layout', props.setM3Layout);
       </v-card-text>
     </v-card>
   </v-dialog>
-  <!-- tools -->
+  <!-- tagSelector -->
   <VueFinalModal
-    v-model="data.isDialog.tools"
-    classes="tools-dialog-container"
+    v-model="data.isDialog.tagSelector"
+    classes="tag-selector-dialog-container"
     :hide-overlay="true"
     :click-to-close="false"
     :z-index-base="1100"
@@ -390,28 +392,42 @@ provide('setM3Layout', props.setM3Layout);
       variant="elevated"
     >
       <v-toolbar>
-        <v-toolbar-title>TEI tools</v-toolbar-title>
+        <v-toolbar-title>Tag Selector</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items>
           <v-btn
             icon="mdi-close"
-            @click="data.isDialog.tools = false"
+            @click="data.isDialog.tagSelector = false"
           ></v-btn>
         </v-toolbar-items>
       </v-toolbar>
       <v-card-text>
         <v-autocomplete
-          v-model="data.teiSelected"
+          v-model="data.tagSelector.model"
+          v-model:search="data.tagSelector.search"
+          :items="tagSelectorItems"
+          item-title="name"
+          item-value="name"
+          hide-no-data
+          hide-selected
           label="tag name or #xml:id"
           density="compact"
-          :items="teiItems"
-          item-title="name"
         >
-          <template v-slot:item="{ props, item }">
-            <v-list-item v-bind="props" nav>
-              {{ item.raw.name }}
-              <template v-if="item.raw.count">
+          <template v-slot:selection="{ item }">
+            <span>
+              {{ item.title }}
+              <span v-if="item.raw.count">
                 ({{ item.raw.count }})
+              </span>
+            </span>
+          </template>
+          <template v-slot:item="{ item, props }">
+            <v-list-item v-bind="props" nav>
+              <template v-slot:title>
+                {{ item.title }}
+                <span v-if="item.raw.count">
+                  ({{ item.raw.count }})
+                </span>
               </template>
             </v-list-item>
           </template>
@@ -419,13 +435,13 @@ provide('setM3Layout', props.setM3Layout);
         <v-sheet
           height="400"
           class="overflow-auto"
-          scrollable v-if="data.codes.length > 0"
+          scrollable
         >
           <v-card
-            v-for="(code, idx) in data.codes"
+            v-for="(code, idx) in tagSelectorCodes"
             :key="idx"
           >
-            <v-chip
+            {{ idx }}: <v-chip
               label
               size="x-small"
             >
@@ -465,16 +481,16 @@ provide('setM3Layout', props.setM3Layout);
   text-orientation: upright;
 }
 
-/* tools */
-:deep(.tools-dialog-container) {
+/* tagSelector */
+:deep(.tag-selector-dialog-container) {
   display: flex;
   justify-content: center;
   align-items: center;
 }
-:deep(.tools-dialog-container) > div {
+:deep(.tag-selector-dialog-container) > div {
   display: flex;
   flex-direction: column;
-  min-width: 600px;
+  width: 600px;
   filter: drop-shadow(0 0 16px black);
 }
 </style>
