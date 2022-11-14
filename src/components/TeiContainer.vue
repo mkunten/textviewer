@@ -207,15 +207,23 @@ const makeChunked = (tree) => {
   const els = el.elements;
   const chunked = [];
   let prev = 0;
+  let lbnum = 0;
   for (let i = 1; i < els.length; i += 1) {
     if (els[i].name === 'pb'
       && (!els[i].attributes.edRef
         || els[i].attributes.edRef === `#${props.edRef}`)) {
       chunked.push(els.slice(prev, i));
+      chunked[chunked.length - 1][0].lbs = lbnum;
       prev = i;
+      lbnum = 0;
+    } else if (els[i].name === 'lb'
+      && (!els[i].attributes.edRef
+        || els[i].attributes.edRef === `#${props.edRef}`)) {
+      lbnum += 1;
     }
   }
   chunked.push(els.slice(prev));
+  chunked[chunked.length - 1][0].lbs = lbnum;
   data.isLazy = Array(chunked.length);
   data.chunked = chunked;
 };
@@ -344,7 +352,7 @@ provide('setM3Layout', props.setM3Layout);
           v-if="!data.isLazy[idx0]"
           color="primary"
           indeterminate
-          style="top: 40%"
+          :style="`top: 40%; min-width: ${els ? els[0].lbs : 0}rem`"
         ></v-progress-circular>
         <v-lazy v-model="data.isLazy[idx0]">
           <div>

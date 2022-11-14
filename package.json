@@ -1,13 +1,15 @@
 {
   "name": "textviewer",
   "version": "0.0.0",
+  "homepage": "https://mkunten.github.io/textviewer",
   "scripts": {
     "serve": "vite preview",
     "build": "vite build",
     "test:unit": "vitest --environment jsdom --root src/",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
     "dev": "vite",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "yarn build && gh-pages -d dist -m \"Updates --skip-ci\""
   },
   "dependencies": {
     "@mdi/font": "7.0.96",
@@ -40,6 +42,7 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-vue": "^9.7.0",
+    "gh-pages": "^4.0.0",
     "jsdom": "^20.0.2",
     "prettier": "^2.7.1",
     "react": "16.8.4",

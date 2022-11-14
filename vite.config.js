@@ -19,7 +19,6 @@ export default defineConfig(({ mode }) => ({
   base: mode === 'production' ? '/textviewer/' : '',
   // build options
   build: {
-    outDir: 'docs',
     commonjsOptions: {
       ignoreTryCatch: (id) => id !== 'stream',
     },
