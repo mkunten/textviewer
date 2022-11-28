@@ -23,6 +23,10 @@ const data = reactive({
       to: '/viewer',
     },
     {
+      title: 'Data',
+      to: '/data',
+    },
+    {
       title: 'About',
       to: '/about',
     },

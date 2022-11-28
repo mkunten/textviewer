@@ -25,6 +25,17 @@ const router = createRouter({
           component: () => import('../views/ViewerView.vue'),
         },
         {
+          path: '/data',
+          name: 'data',
+          component: () => import('../views/JsonDataView.vue'),
+        },
+        {
+          path: '/data/:jsonKey',
+          name: 'dataItem',
+          component: () => import('../views/JsonDataItemView.vue'),
+          props: true,
+        },
+        {
           path: '/about',
           name: 'about',
           // route level code-splitting

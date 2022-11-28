@@ -1,6 +1,7 @@
 <script setup>
-import Mirador from 'mirador/dist/es/src';
+import Mirador from 'mirador';
 import { miradorImageToolsPlugin } from 'mirador-image-tools';
+import miradorCurationApiPlugins from 'mirador-curation-api-plugin';
 import {
   reactive, watch, onMounted, onBeforeUnmount,
 } from 'vue';
@@ -59,6 +60,11 @@ const generateM3Config = () => ({
   workspace: {
     layout: generateM3Layout(),
   },
+  curationApi: {
+    curations: [
+      'https://mp.ex.nii.ac.jp/api/curation/json/1bc036ce-87be-4d94-b7cd-4a51cb390b95',
+    ],
+  },
 });
 
 const initM3 = () => {
@@ -66,7 +72,10 @@ const initM3 = () => {
     data.m3.unmount();
   }
 
-  data.m3 = Mirador.viewer(generateM3Config(), [...miradorImageToolsPlugin]);
+  data.m3 = Mirador.viewer(generateM3Config(), [
+    ...miradorImageToolsPlugin,
+    ...miradorCurationApiPlugins,
+  ]);
 
   window.m3 = data.m3; // debug
 };

@@ -18,6 +18,7 @@
     "events": "^3.3.0",
     "install": "^0.13.0",
     "mirador": "^3.3.0",
+    "mirador-curation-api-plugin": "https://github.com/mkunten/mirador-curation-api-plugin#main",
     "mirador-image-tools": "^0.11.0",
     "pinia": "^2.0.23",
     "prismjs": "^1.29.0",
@@ -29,7 +30,8 @@
     "vue-final-modal": "3",
     "vue-prism-component": "https://github.com/mxmvshnvsk/vue-prism-component#fix/code-prop",
     "vue-router": "^4.1.5",
-    "vuetify": "npm:@vuetify/nightly@next",
+    "vue3-json-editor": "^1.1.5",
+    "vuetify": "^3.0.2",
     "webfontloader": "^1.0.0",
     "xml-js": "^1.6.11"
   },
