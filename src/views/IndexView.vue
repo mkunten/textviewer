@@ -1,5 +1,6 @@
 <script setup>
-import { reactive } from 'vue';
+import axios from 'axios';
+import { reactive, onUnmounted } from 'vue';
 import { useStore } from '@/stores/index';
 
 // store
@@ -33,21 +34,54 @@ const data = reactive({
   ],
   messageLogDialog: false,
 });
+const snackbar = reactive({
+  isOpen: false,
+  color: 'primary',
+  timeout: 5000,
+  message: 'no messages',
+});
 
 // methods
+const showSuccess = (message) => {
+  snackbar.color = 'info';
+  snackbar.message = message;
+  snackbar.isOpen = true;
+};
+
+const showError = (error) => {
+  const message = axios.isAxiosError(error)
+    ? error.response.data.message : error;
+  snackbar.color = 'error';
+  snackbar.message = message;
+  snackbar.isOpen = true;
+};
+
 function test() {
-  store.messages.push({
-    sender: 'index',
-    type: 'success',
-    message: 'success test ',
-  });
-  store.messages.push({
-    sender: 'index',
-    type: 'error',
-    message: 'error test',
-  });
-  console.log(store.messages);
+  store.pushMessage('index', 'success', 'success test');
+  store.pushMessage('index', 'error', 'error test');
 }
+
+// subscribe state
+const unsubscribe = store.$onAction(({ name, args }) => {
+  if (name === 'pushMessage') {
+    const message = { type: args[1], value: args[2] };
+    switch (message.type) {
+      case 'success':
+        showSuccess(message.value);
+        break;
+      case 'error':
+        showError(message.value);
+        break;
+      default:
+        showError('unexpected message type');
+        break;
+    }
+  }
+});
+
+onUnmounted(() => {
+  unsubscribe();
+});
 </script>
 
 <template>
@@ -110,12 +144,22 @@ function test() {
             <v-chip :color="m.type" :title="m.type">
               {{ m.sender }}
             </v-chip>
-            {{ m.message }}
+            {{ m.value }}
           </v-list-item>
         </v-list>
       </v-card-text>
     </v-card>
   </v-dialog>
+  <v-snackbar
+    v-model="snackbar.isOpen"
+    :color="snackbar.color"
+    :timeout="snackbar.timeout"
+  >
+    {{ snackbar.message }}
+    <template v-slot:actions>
+      <v-btn icon="mdi-close" @click="snackbar.isOpen = false"></v-btn>
+    </template>
+  </v-snackbar>
 </template>
 
 <style scoped>

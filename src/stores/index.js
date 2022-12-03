@@ -20,8 +20,8 @@ export const useStore = defineStore({
     texts: {
       奈良女: {
         title: '奈良女',
-        // xmlURI: "http://localhost:1323/api/files/xmlbyname/kiryo20221026.xml",
-        xmlURI: 'http://localhost:1323/api/files/xmlbyname/kiryoshort.xml',
+        xmlURI: 'http://localhost:1323/api/files/xmlbyname/kiryo.xml',
+        // xmlURI: 'http://localhost:1323/api/files/xmlbyname/kiryoshort.xml',
         manifestURI: {
           奈良女: 'https://kotenseki.nijl.ac.jp/biblio/100260054/manifest',
           南葵1:
@@ -31,6 +31,9 @@ export const useStore = defineStore({
           南葵3:
             'https://iiif.dl.itc.u-tokyo.ac.jp/repo/iiif/e77cbfbb-52fd-18da-891a-b334ea1fa43d/manifest',
         },
+        curationsURIs: [
+          'http://localhost:1323/api/jsonData/kiryo_curations?fmt=json',
+        ],
         layout: [['奈良女'], ['南葵1', '南葵2', '南葵3']],
         layoutIdIdx: [0, 0],
         layoutCanvasIdOrIdx: [0, 0], // idx or canvasId
@@ -50,6 +53,9 @@ export const useStore = defineStore({
     currTree(state) {
       return state.treeData[state.texts[state.currId].xmlURI];
     },
+    getLatestMessage(state) {
+      return state.masseges && state.messages.slice(-1);
+    },
   },
 
   actions: {
@@ -67,6 +73,14 @@ export const useStore = defineStore({
       }
       this.currId = id;
       return id;
+    },
+    // messages
+    pushMessage(sender, type, value) {
+      this.messages.push({
+        sender,
+        type,
+        value,
+      });
     },
   },
 });

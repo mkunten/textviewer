@@ -62,7 +62,7 @@ const generateM3Config = () => ({
   },
   curationApi: {
     curations: [
-      'https://mp.ex.nii.ac.jp/api/curation/json/1bc036ce-87be-4d94-b7cd-4a51cb390b95',
+      ...store.currText.curationsURIs,
     ],
   },
 });

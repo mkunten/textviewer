@@ -17,12 +17,6 @@ const refCreateFile = {
 // data
 const apiBase = import.meta.env.VITE_API_BASE;
 const apiFiles = `${apiBase}/files`;
-const snackbar = reactive({
-  isOpen: false,
-  color: 'primary',
-  timeout: 5000,
-  message: 'no messages',
-});
 const fileDefault = {
   id: 0,
   name: '',
@@ -51,27 +45,14 @@ const data = reactive({
 });
 
 // methods
-const showSuccess = (mes) => {
-  snackbar.color = 'info';
-  snackbar.message = mes;
-  snackbar.isOpen = true;
-  store.messages.push({
-    sender: 'files',
-    type: 'success',
-    message: mes,
-  });
+const showSuccess = (message) => {
+  store.pushMessage('Files', 'success', message);
 };
-const showError = (err) => {
-  const mes = axios.isAxiosError(err) ? err.response.data.message : err;
-  snackbar.color = 'error';
-  snackbar.message = mes;
-  snackbar.isOpen = true;
-  store.messages.push({
-    sender: 'files',
-    type: 'error',
-    message: mes,
-  });
+
+const showError = (error) => {
+  store.pushMessage('Files', 'error', error);
 };
+
 const onSearch = () => {
   axios
     .get(apiFiles)
@@ -82,10 +63,12 @@ const onSearch = () => {
       showError(err);
     });
 };
+
 const editNewFile = () => {
   data.file = fileDefault;
   data.fileDialog = true;
 };
+
 const createFile = () => {
   refCreateFile[data.tab].value.validate();
   if (data.formValid) {
@@ -106,10 +89,12 @@ const createFile = () => {
       });
   }
 };
+
 const confirmDeleteFile = (file) => {
   data.file = file;
   data.deleteFileDialog = true;
 };
+
 const deleteFile = () => {
   axios
     .delete(`${apiFiles}/${data.file.id}`)
@@ -133,16 +118,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-snackbar
-    v-model="snackbar.isOpen"
-    :color="snackbar.color"
-    :timeout="snackbar.timeout"
-  >
-    {{ snackbar.message }}
-    <template v-slot:actions>
-      <v-btn icon="mdi-close" @click="snackbar.isOpen = false"></v-btn>
-    </template>
-  </v-snackbar>
   <!-- v-data-table has not been implemented -->
   <v-container v-if="data.files.length > 0">
     <v-row>

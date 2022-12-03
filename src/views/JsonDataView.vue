@@ -48,27 +48,12 @@ const data = reactive({
 });
 
 // methods
-const showSuccess = (mes) => {
-  snackbar.color = 'info';
-  snackbar.message = mes;
-  snackbar.isOpen = true;
-  store.messages.push({
-    sender: 'jsonData',
-    type: 'success',
-    message: mes,
-  });
+const showSuccess = (message) => {
+  store.pushMessage('JsonData', 'success', message);
 };
 
-const showError = (err) => {
-  const mes = axios.isAxiosError(err) ? err.response.data.message : err;
-  snackbar.color = 'error';
-  snackbar.message = mes;
-  snackbar.isOpen = true;
-  store.messages.push({
-    sender: 'jsonData',
-    type: 'error',
-    message: mes,
-  });
+const showError = (error) => {
+  store.pushMessage('JsonData', 'error', error);
 };
 
 const init = () => {

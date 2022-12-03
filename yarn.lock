@@ -2118,8 +2118,8 @@ minimist@^1.2.0, minimist@^1.2.6:
   integrity sha512-bzfL1YUZsP41gmu/qjrEk0Q6i2ix/cVeAhbCbqH9u3zYutS1cLg00qhrD0M2MVdCcx4Sc0UpP2eBWo9rotpq6g==
 
 "mirador-curation-api-plugin@https://github.com/mkunten/mirador-curation-api-plugin#main":
-  version "0.0.2"
-  resolved "https://github.com/mkunten/mirador-curation-api-plugin#57f56640a529277f4116f34d231a2dc1248211c5"
+  version "0.0.3"
+  resolved "https://github.com/mkunten/mirador-curation-api-plugin#f44832d667c202abb56660c06384ae28d0ca0091"
 
 mirador-image-tools@^0.11.0:
   version "0.11.0"

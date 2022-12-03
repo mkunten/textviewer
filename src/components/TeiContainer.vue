@@ -204,6 +204,9 @@ const makeChunked = (tree) => {
   if (el.name === 'text') {
     el = el.elements.find((e) => e.name === 'body');
   }
+  if (el.name === 'body') {
+    el = el.elements.find((e) => e.name === 'p');
+  }
   const els = el.elements;
   const chunked = [];
   let prev = 0;
@@ -226,6 +229,7 @@ const makeChunked = (tree) => {
   chunked[chunked.length - 1][0].lbs = lbnum;
   data.isLazy = Array(chunked.length);
   data.chunked = chunked;
+  console.info('chunked', chunked);
 };
 
 const init = async () => {

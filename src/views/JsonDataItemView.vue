@@ -1,11 +1,11 @@
 <script setup>
 import axios from 'axios';
 import { reactive, unref, onMounted } from 'vue';
-// import { useStore } from '../stores/index';
 import { Vue3JsonEditor } from 'vue3-json-editor';
+import { useStore } from '../stores/index';
 
 // store
-// const store = useStore();
+const store = useStore();
 
 // props
 const props = defineProps({
@@ -24,8 +24,13 @@ const data = reactive({
 });
 
 // methods
-const showError = console.error;
-const showSuccess = console.info;
+const showSuccess = (message) => {
+  store.pushMessage('JsonDataItem', 'success', message);
+};
+
+const showError = (error) => {
+  store.pushMessage('JsonDataItem', 'error', error);
+};
 
 const init = () => {
   axios.get(`${apiJsonData}/${props.jsonKey}`)
